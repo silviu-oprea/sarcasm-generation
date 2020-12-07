@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../slib"
+		},
+		{
+			"path": "../mlpr"
+		},
+		{
+			"path": "../sarcasm-detection"
+		}
+	],
+	"settings": {
+		"python.pythonPath": "/Users/silviu/miniconda3/envs/nlp/bin/python",
+		"jupyter.jupyterServerType": "local",
+	}
+}
