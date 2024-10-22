@@ -1,0 +1,1 @@
+from random_selector import select_strategy as random

@@ -1,5 +1,9 @@
 # Sarcasm Generation
 
+python -m spacy download en_core_web_sm
+
+- test for pattern negation extractor
+
 ## Software workflow
 
 The entry point is main.generate_sarcastic_response(event). It takes as input an

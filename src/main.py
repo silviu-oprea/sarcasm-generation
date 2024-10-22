@@ -1,56 +1,119 @@
+import argparse
+import json
 import logging
 
-from slib import logs
+from typing import List
 
-from expectation_extractors.pattern_negation_extractor import extract_expectations
-from commonsense_builders.comet_builder import build_commonsense
-from strategy_selectors.random_selector import select_strategy
-from generators.pattern_generator import generate_response
+from max import ExplainableSarcasticResponse
+from max import (
+    expectation_extractors, commonsense_builders, strategy_selectors,
+    response_generators
+)
 
-logger = logs.create_logger('main')
+logger = logging.create_logger('main')
 
 
-def generate_sarcastic_responses(event, n_resp):
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--event_file_path",
+        type=str,
+        help=(
+            "Optional. A text file containing one event per line. An event is "
+            "a text that describes an action performed by someone, e.g. "
+            '"I won the marathon". If not preset will enter interactive mode.'
+        )
+    )
+    parser.add_argument(
+        "--output_file_path",
+        type=str,
+        help=(
+            "Optional. A json file where to save the output sarcastic "
+            "responses, each with the failed expectation and the failure "
+            "strategy. Required if event_file_path is set."
+        )
+    )
+    args = parser.parse_args()
+    if args.event_file_path is not None:
+        assert args.output_file_path is not None, (
+            "If event_file_path is provided, output_file_path is also needed"
+        )
+    return args
+
+
+def generate_sarcastic_responses(
+    event: str, num_responses: int = 1
+) -> List[ExplainableSarcasticResponse]:
     """Generates a list of sarcastic responses to the input event.
+
+    Example:
+      for the event="I ran out of characters"
+      one response might be "Yay! Good job not knowing how to write."
 
     Args:
         event (str): An event, i.e. a reference to an action performed by an
-            actor, such as "Ben won the marathon".
-        n_resp (int): The number of sarcastic responses to generate.
+            actor, such as "I ran out of characters"
+        num_responses (int): The number of sarcastic responses to generate.
 
     Returns:
-        list[tuple[expectation, strategy, response]]: A list of sarcastic
-            responses to the input event, along with the expectation and the
-            (expectation) failure strategy. The latter two can be used to
-            generate an explanation as to why the response is sarcastic.
+        `List[max.SarcasticResponse]`: A list of sarcastic  responses to the
+            input event. Each response is accompanied by the failed expectation
+            and the failure strategy. The latter two can be used to generate an
+            explanation as to why the response is sarcastic.
     """
-    resp = []
+    response_lst = []
 
-    logger.info('Extracting expectations')
-    exps = extract_expectations(event, use_antonyms=True)
-    logger.info('Extracted %d expectations', len(exps))
+    logger.info("Extracting expectations")
+    expectation_lst = expectation_extractors.pattern_negation(
+        event, use_antonyms=True
+    )
+    logger.info(f"Extracted {len(expectation_lst)} expectations")
 
-    for it_num, exp in enumerate(exps, start=1):
-        logger.info('Expectation %s / %s: building commonsense',
-                    it_num, len(exps))
-        objects = build_commonsense(exp)
+    for it_num, failed_expectation in enumerate(expectation_lst):
+        logger.info(
+            f"Expectation {it_num} / {len(expectation_lst)}: "
+            "building commonsense"
+        )
+        object_lst = commonsense_builders.comet(expectation_lst)
 
-        logger.info('Expectation %s / %d: '
-                    'selecting strategy and generating responses',
-                    it_num, len(exps))
-        for _ in range(n_resp):
-            strategy = select_strategy(objects)
-            text = generate_response(exp, strategy)
-            resp.append((exp, strategy, text))
+        logger.info(
+            f"Expectation {it_num} / {len(expectation_lst)}: "
+            'selecting strategy and generating responses'
+        )
+        for _ in range(num_responses):
+            failure_strategy = strategy_selectors.random(object_lst)
+            response_text = response_generators.pattern(
+                failed_expectation, failure_strategy
+            )
+            response_lst.append(ExplainableSarcasticResponse(
+                response_text, failed_expectation, failure_strategy
+            ))
+    return response_lst
 
-    return resp
+
+def main_batch(event_file_path, output_file_path):
+    with open(event_file_path, 'r', encoding='utf-8') as in_fp, \
+         open(output_file_path, 'w', encoding='utf-8') as out_fp:
+        for line in in_fp:
+            event = line.strip()
+        response = generate_sarcastic_responses(event, num_responses=1)[0]
+        serial = {
+            "event": event,
+            "response_text": response.response_text,
+            "failed_expectation": response.failed_expectation,
+            "failure_strategy": response.failure_strategy
+        }
+        out_fp.write(json.dumps(serial) + "\n")
 
 
-EVENT = 'Ben won the marathon'
-responses = generate_sarcastic_responses(EVENT, 1)
-for response in responses:
-    expectation, strategy, texts = response
-    print('Event:', EVENT)
-    print('\tExpectation:', expectation)
-    print('\tStrategy:', strategy)
-    print('\tText:', '. '.join(texts))
+def main_interactive():
+    raise NotImplementedError
+
+
+if __name__ == "__main__":
+    args = parse_args()
+
+    if args.event_file_path is not None:
+        main_batch(args.event_file_path)
+    else:
+        main_interactive()
