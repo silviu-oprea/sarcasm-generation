@@ -1,1 +1,1 @@
-from pattern_generator import generate_response as pattern
+from .pattern_generator import PatternResponseGenerator

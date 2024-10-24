@@ -1,1 +1,2 @@
-from comet_builder import build_commonsense as comet
+from .sentiment_analyser import SentimentAnalyser
+from .comet_builder import CometCommonsenseBuilder

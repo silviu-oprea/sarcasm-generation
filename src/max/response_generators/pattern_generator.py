@@ -1,132 +1,179 @@
-import nltk
 import random
-from nltk.corpus import sentiwordnet as swn
 
-try:
-    nltk.data.find('corpora/sentiwordnet')
-except LookupError:
-    nltk.download('sentiwordnet')
-# list(swn.senti_synsets('happy', 'a'))[0].pos_score
+import spacy
 
-# Example xIntent objects, given event P:
-# - P=Ben won the marathon: to loose, to give up 1st place
-# - P=Ben enjoyed the party: to be alone, to stay home
-xIntent = [
-    lambda obt: f'And you really tried {obt}, didn\'t you?'
-]
-
-# Example xNeed objects, given event P:
-# - P=Ben won the marathon: to ignore training, to not practice
-# - P=Ben enjoyed the party: to be antisocial, to not socialise
-xNeed = [
-    lambda obt: 'Good thing you decided ' + obt
-]
-
-# Example attributes, given event P:
-# - P=Ben won the marathon: defeated, unskilled, incompetent
-# - P=Ben enjoyed the party: unsocial, sad, careless
-xAttr = [
-    lambda obt: 'Right, you must be slightly ' + obt,
-    lambda obt: 'You must be a bit ' + obt,
-    lambda obt: f'You must be somewhat {obt}, are you not?',
-
-    lambda obt: 'Oh, you ' + obt + ' person!',
-    lambda obt: 'You must be ' + obt,
-
-    lambda obt: f'You must be quite {obt}!',
-    lambda obt: 'You must be very ' + obt,
-    lambda obt: 'You must be terribly ' + obt,
-    lambda obt: 'You are definitely ' + obt
-]
-
-# xEffect: Given event P, PersonX then:
-# - P=Ben won the marathon: cries, get defeated
-# - P=Ben enjoyed the party: get yelled at, get drunk, loose friends
-xEffect=[ # personx then...
-    lambda obt: f"You'll definitely {obt} now!",
-    lambda obt: f"Don't worry if you you'll {obt} now. It's OK.",
-    lambda obt: f"Ah! I think you'll {obt} now."
-]
-
-# Example attributes, given event P:
-# - P=Ben won the marathon: to try harder, to not give up.
-# - P=Ben enjoyed the party: to go home, to sleep
-xWant=[
-    lambda obt: f'You probably want to {obt}, and I support you!',
-    lambda obt: f"It's understandable if you'd like to {obt} now..."
-]
-
-# Example attributes, given event P:
-# - P=Ben won the marathon: sad, defeated, disappointed
-# - P=Ben enjoyed the party: sad, bad, tired
-xReact=[
-    lambda obt: f"I'm sorry you feel so {obt}...",
-    lambda obt: f'Oh, you are feeling quite {obt}, are you not?'
-]
-
-# Example attributes, given event P:
-# - P=Ben won the marathon: give personx some tea
-# - P=Ben enjoyed the party: drive personx home
-oEffect=[
-    lambda obt: f"Your friends will {obt} now."
-]
-
-# Example attributes, given event P:
-# - P=Ben won the marathon: to provide consolation
-# - P=Ben enjoyed the party: to help you get through
-oWant=[
-    lambda obt: f"Your friends probably want to {obt} now."
-]
-
-# Example attributes, given event P:
-# - P=Ben won the marathon: disappointed, sad, upset
-# - P=Ben enjoyed the party: to
-oReact=[
-    lambda obt: f"Your friends must be feeling {obt} now..."
-]
-
-rel2pats = dict(xIntent=xIntent, xNeed=xNeed, xAttr=xAttr,
-                xReact=xReact, xWant=xWant, xEffect=xEffect,
-                oReact=oReact, oWant=oWant, oEffect=oEffect)
-
-def preprocess(obts):
-    """Just some weird hacks for now. Will have a preprocessor for each relation
-    type.
-    """
-    pre_obts = []
-    for obt in obts:
-        toks = obt.split()
-        if toks[0] == 'to':
-            toks = toks[1:]
-        for i in range(len(toks)):
-            if toks[i] == 'personx':
-                toks[i] = 'you'
-        pre_obts.append(' '.join(toks))
-    return ', '.join(pre_obts[:-1]) + ' and ' + pre_obts[-1]
+from .generator import ResponseGenerator
+from max import ExplainableSarcasticResponse
 
 
-def generate_response(expectation, strategy):
-    """Generates a sarcastic response given the expectation failure strategy.
+nlp = spacy.load('en_core_web_sm')
 
-    Args:
-        exp (str): Expectation. Provided to extract the subject S.
-        strategy (dict(
-            priors -> list(tuple(T, list(O))),
-            posteriors -> list(tuple(T, list(O)))
-        )):
-            Tuples of prior and posterior relations R and objects O, such that,
-            for each O, and for each R, it is the case that R(S, O).
-    """
 
-    comments = []
-    for rel, obts in strategy['priors']:
-        obts = preprocess(obts)
-        pat = random.choice(rel2pats[rel])
-        comments.append(pat(obts))
+class PatternResponseGenerator(ResponseGenerator):
+    def __init__(self, patterns, valid_relation_types):
+        self.patterns = patterns
+        self.valid_relation_types = valid_relation_types
 
-    for rel, obts in strategy['posteriors']:
-        obts = preprocess(obts)
-        pat = random.choice(rel2pats[rel])
-        comments.append(pat(obts))
+    def generate_responses(self, event, failed_expectation, cs_obt):
+        """Generate explainable sarcastic responses from the give commonsense
+        object.
 
-    return comments
+        Args:
+            failed_expectation (`str`):
+                An event that is incongruous to the input event. This event has
+                failed since the input event happened.
+            cs_obt (`CommonsenseBuilderResponse`):
+                Instance of CommonsenseBuilderResponse from which the
+                explainable sarcastic response will be constructed.
+
+        Return:
+            `ExplainableSarcasticResponse`:
+                An object containing the relation, subject and object;
+                the norm violated (which, in this implementation is always
+                the maxim of quality), the failed expectation, and the
+                response texts.
+        """
+        responses = []
+        def _generate_responses_for_target(target, pattern_name):
+            for relation_type in self.valid_relation_types:
+                if len(target[relation_type]) == 0:
+                    continue
+
+                # consider the first relation object
+                relation_object = target[relation_type][0]
+                generator = self.patterns[pattern_name][relation_type]
+                texts = generator(relation_object)
+
+                responses.append(ExplainableSarcasticResponse(
+                    event=event,
+                    failed_expectation=failed_expectation,
+                    relation_type=relation_type,
+                    relation_subject="event",
+                    relation_object=relation_object,
+                    norm_violated="maxim of quality",
+                    response_texts=texts
+                ))
+        _generate_responses_for_target(cs_obt.event_obts, "event")
+        if cs_obt.failed_expectation_obts is not None:
+            _generate_responses_for_target(
+                cs_obt.failed_expectation_obts, "failed_expectation"
+            )
+        return responses
+
+    @classmethod
+    def default(cls):
+        patterns = dict(
+            event=dict(
+                xNeed=gen_xNeed_complete,
+                xAttr=gen_xAttr_complete,
+                xReact=gen_xReact_complete,
+                xEffect=gen_xEffect_complete
+            ),
+            failed_expectation=dict(
+                xNeed=lambda obt: gen_xNeed_complete(obt, P=False),
+                xAttr=lambda obt: gen_xAttr_complete(obt, P=False),
+                xReact=lambda obt: gen_xReact_complete(obt, P=False),
+                xEffect=lambda obt: gen_xEffect_complete(obt, P=False)
+            )
+        )
+        valid_relation_types = ['xNeed', 'xAttr', 'xReact', 'xEffect']
+        return cls(patterns, valid_relation_types)
+
+
+interjs = ['Yay!', 'Brilliant!']
+compls = ['Good job', 'Well done']
+suff_intens = ['for sure']
+intens = ['very']
+
+
+def gen_xNeed_complete(obt, P=True):
+    # Interjection and compliment:
+    #   [interj: Yay!] [compliment: Good job] (P ? not :)
+    #   training for the marathon.
+    interj = random.choice(interjs)
+    compl = random.choice(compls)
+    obt_ger = get_inflection(obt, 'VBG', context='I')
+    u1 = f"{interj} {compl}{' not ' if P else ' '}{obt_ger}."
+
+    # Intensifier and compliment:
+    #   You (P ? didn't :) (P ? train : trained) for the
+    #     marathon, that's [inten: for sure]. [compliment: Good job!]
+    suff_inten = random.choice(suff_intens)
+    compl = random.choice(compls)
+    if P:
+        # say that precondition of P is not the case
+        u2 = f"You didn't {obt}, that's {suff_inten}. {compl}!"
+    else:
+        # say that precondition of Q is the case
+        obt_past = get_inflection(obt, 'VBD', context='I')
+        u2 = f"You {obt_past}, that's {suff_inten}. {compl}!"
+
+    return [u1, u2]
+
+
+def gen_xAttr_complete(obt, P=True):
+    # Interjection and intensifier:
+    #   [Yay!] You're (P ? not :) [inten: very] athletic,
+    #   that's [inten: for sure].
+    interj = random.choice(interjs)
+    inten = random.choice(intens)
+    suff_inten = random.choice(suff_intens)
+    u1 = f"{interj} You're{' not ' if P else ' '} {inten} {obt}, that's {suff_inten}."
+
+    # Interjection and compliment
+    # [interj: Yay!] [inten: Good job] (P ? not :) being athletic.
+    interj = random.choice(interjs)
+    compl = random.choice(compls)
+    u2 = f"{interj} {compl}{' not ' if P else ' '}being {obt}."
+
+    # Intensifier and compliment
+    # You're not a [inten: very] athelic person, that's
+    #   [inten: for sure ]. [compliment: Good job!]
+    interj = random.choice(interjs)
+    suff_inten = random.choice(suff_intens)
+    u3 = f"{interj} You're{' not ' if P else ' '}a very {obt} person, " + \
+        f"that's {suff_inten}."
+
+    # return random.choice([u1, u2, u3])
+    return [u1, u2, u3]
+
+
+def gen_xReact_complete(obt, P=True):
+    # Intensifier and interjection
+    # You're not feeling [inten: very] happy right now, that's
+    #   [inten: for sure]. [interj: Yay!]
+    inten = random.choice(intens)
+    suff_inten = random.choice(suff_intens)
+    interj = random.choice(interjs)
+    u1 = f"You're{' not ' if P else ' '}feeling {inten} {obt} right now, " + \
+        f"that's {suff_inten}. {interj}"
+
+    return [u1]
+
+
+def gen_xEffect_complete(obt, P=True):
+    obt_inf = get_inflection(obt, 'VB', context='he')
+
+    # Intensifier and interjection
+    # You're not [inten: really] going to become famous right now,
+    #   that's [inten: for sure]. [interj: Yay!]
+    interj = random.choice(interjs)
+    inten = 'really'
+    suff_inten = random.choice(suff_intens)
+    u1 = f"You're{' not ' if P else ' '}{inten} going to {obt_inf} " + \
+        f"right now, that's {suff_inten}. {interj}"
+    # return random.choice([u1, u2])
+    return [u1]
+
+
+def get_inflection(obt, tag, context=''):
+    toks = []
+    found_verb = False
+
+    for tok in nlp(context + ' ' + obt):
+        if tok.pos_ in ['VERB', 'AUX'] and found_verb is False:
+            found_verb = True
+            toks.append(tok._.inflect(tag))
+        else:
+            toks.append(str(tok))
+    return ' '.join(toks[len(context.split()):])

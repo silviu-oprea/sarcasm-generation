@@ -1,0 +1,167 @@
+[
+  {
+    "event": "Ben won the marathon",
+    "failed_expectation": "Ben did not win the marathon",
+    "relation_type": "xNeed",
+    "relation_subject": "event",
+    "relation_object": "train for the marathon",
+    "norm_violated": "maxim of quality",
+    "response_texts": [
+      "Brilliant! Good job not training for the marathon.",
+      "You didn't train for the marathon, that's for sure. Well done!"
+    ]
+  },
+  {
+    "event": "Ben won the marathon",
+    "failed_expectation": "Ben did not win the marathon",
+    "relation_type": "xAttr",
+    "relation_subject": "event",
+    "relation_object": "athletic",
+    "norm_violated": "maxim of quality",
+    "response_texts": [
+      "Brilliant! You're not  very athletic, that's for sure.",
+      "Yay! Good job not being athletic.",
+      "Yay! You're not a very athletic person, that's for sure."
+    ]
+  },
+  {
+    "event": "Ben won the marathon",
+    "failed_expectation": "Ben did not win the marathon",
+    "relation_type": "xReact",
+    "relation_subject": "event",
+    "relation_object": "happy",
+    "norm_violated": "maxim of quality",
+    "response_texts": [
+      "You're not feeling very happy right now, that's for sure. Yay!"
+    ]
+  },
+  {
+    "event": "Ben won the marathon",
+    "failed_expectation": "Ben did not win the marathon",
+    "relation_type": "xEffect",
+    "relation_subject": "event",
+    "relation_object": "become famous",
+    "norm_violated": "maxim of quality",
+    "response_texts": [
+      "You're not really going to become famous right now, that's for sure. Brilliant!"
+    ]
+  },
+  {
+    "event": "Ben won the marathon",
+    "failed_expectation": "Ben did not win the marathon",
+    "relation_type": "xAttr",
+    "relation_subject": "event",
+    "relation_object": "defeated",
+    "norm_violated": "maxim of quality",
+    "response_texts": [
+      "Brilliant! You're  very defeated, that's for sure.",
+      "Brilliant! Good job being defeated.",
+      "Brilliant! You're a very defeated person, that's for sure."
+    ]
+  },
+  {
+    "event": "Ben won the marathon",
+    "failed_expectation": "Ben did not win the marathon",
+    "relation_type": "xReact",
+    "relation_subject": "event",
+    "relation_object": "upset",
+    "norm_violated": "maxim of quality",
+    "response_texts": [
+      "You're feeling very upset right now, that's for sure. Yay!"
+    ]
+  },
+  {
+    "event": "Ben won the marathon",
+    "failed_expectation": "Ben did not win the marathon",
+    "relation_type": "xEffect",
+    "relation_subject": "event",
+    "relation_object": "cries",
+    "norm_violated": "maxim of quality",
+    "response_texts": [
+      "You're really going to cry right now, that's for sure. Yay!"
+    ]
+  }
+][
+  {
+    "event": "I ran out of characters",
+    "failed_expectation": "I did not run out of characters",
+    "relation_type": "xNeed",
+    "relation_subject": "event",
+    "relation_object": "know how to write",
+    "norm_violated": "maxim of quality",
+    "response_texts": [
+      "Brilliant! Good job not knowing how to write.",
+      "You didn't know how to write, that's for sure. Well done!"
+    ]
+  },
+  {
+    "event": "I ran out of characters",
+    "failed_expectation": "I did not run out of characters",
+    "relation_type": "xAttr",
+    "relation_subject": "event",
+    "relation_object": "unintelligent",
+    "norm_violated": "maxim of quality",
+    "response_texts": [
+      "Yay! You're not  very unintelligent, that's for sure.",
+      "Brilliant! Good job not being unintelligent.",
+      "Brilliant! You're not a very unintelligent person, that's for sure."
+    ]
+  },
+  {
+    "event": "I ran out of characters",
+    "failed_expectation": "I did not run out of characters",
+    "relation_type": "xReact",
+    "relation_subject": "event",
+    "relation_object": "embarrassed",
+    "norm_violated": "maxim of quality",
+    "response_texts": [
+      "You're not feeling very embarrassed right now, that's for sure. Yay!"
+    ]
+  },
+  {
+    "event": "I ran out of characters",
+    "failed_expectation": "I did not run out of characters",
+    "relation_type": "xEffect",
+    "relation_subject": "event",
+    "relation_object": "sigh in frustration",
+    "norm_violated": "maxim of quality",
+    "response_texts": [
+      "You're not really going to sigh in frustration right now, that's for sure. Yay!"
+    ]
+  },
+  {
+    "event": "I ran out of characters",
+    "failed_expectation": "I did not run out of characters",
+    "relation_type": "xAttr",
+    "relation_subject": "event",
+    "relation_object": "incompetent",
+    "norm_violated": "maxim of quality",
+    "response_texts": [
+      "Brilliant! You're  very incompetent, that's for sure.",
+      "Yay! Well done being incompetent.",
+      "Yay! You're a very incompetent person, that's for sure."
+    ]
+  },
+  {
+    "event": "I ran out of characters",
+    "failed_expectation": "I did not run out of characters",
+    "relation_type": "xReact",
+    "relation_subject": "event",
+    "relation_object": "like a failure",
+    "norm_violated": "maxim of quality",
+    "response_texts": [
+      "You're feeling very like a failure right now, that's for sure. Brilliant!"
+    ]
+  },
+  {
+    "event": "I ran out of characters",
+    "failed_expectation": "I did not run out of characters",
+    "relation_type": "xEffect",
+    "relation_subject": "event",
+    "relation_object": "get tired",
+    "norm_violated": "maxim of quality",
+    "response_texts": [
+      "You're really going to get tired right now, that's for sure. Brilliant!"
+    ]
+  }
+]

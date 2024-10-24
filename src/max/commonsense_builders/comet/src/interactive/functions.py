@@ -18,17 +18,15 @@ def load_model_file(model_file):
 
     return opt, state_dict
 
-def load_data(dataset, opt, data_root=None, model_root=None):
+def load_data(dataset, opt):
     if dataset == "atomic":
-        data_loader = load_atomic_data(opt, data_root)
+        data_loader = load_atomic_data(opt)
     elif dataset == "conceptnet":
         data_loader = load_conceptnet_data(opt)
 
     # Initialize TextEncoder
-    if model_root is None:
-        model_root = 'model'
-    encoder_path = model_root + '/encoder_bpe_40000.json'
-    bpe_path = model_root + '/vocab_40000.bpe'
+    encoder_path = "model/encoder_bpe_40000.json"
+    bpe_path = "model/vocab_40000.bpe"
     text_encoder = TextEncoder(encoder_path, bpe_path)
     text_encoder.encoder = data_loader.vocab_encoder
     text_encoder.decoder = data_loader.vocab_decoder
@@ -36,16 +34,14 @@ def load_data(dataset, opt, data_root=None, model_root=None):
     return data_loader, text_encoder
 
 
-def load_atomic_data(opt, data_root=None):
+def load_atomic_data(opt):
     # Hacky workaround, you may have to change this
     # if your models use different pad lengths for e1, e2, r
     if opt.data.get("maxe1", None) is None:
         opt.data.maxe1 = 17
         opt.data.maxe2 = 35
         opt.data.maxr = 1
-    if data_root is None:
-        data_root = 'data/atomic/processed/generation'
-    path = data_root + "/{}.pickle".format(
+    path = "data/atomic/processed/generation/{}.pickle".format(
         utils.make_name_string(opt.data))
     data_loader = data.make_data_loader(opt, opt.data.categories)
     loaded = data_loader.load_data(path)
@@ -94,17 +90,12 @@ def set_sampler(opt, sampling_algorithm, data_loader):
     return sampler
 
 
-def get_atomic_sequence(
-    input_event, model, sampler, data_loader, text_encoder, category,
-    should_print=True
-):
+def get_atomic_sequence(input_event, model, sampler, data_loader, text_encoder, category):
     if isinstance(category, list):
         outputs = {}
         for cat in category:
             new_outputs = get_atomic_sequence(
-                input_event, model, sampler, data_loader, text_encoder, cat,
-                should_print
-            )
+                input_event, model, sampler, data_loader, text_encoder, cat)
             outputs.update(new_outputs)
         return outputs
     elif category == "all":
@@ -112,9 +103,7 @@ def get_atomic_sequence(
 
         for category in data_loader.categories:
             new_outputs = get_atomic_sequence(
-                input_event, model, sampler, data_loader, text_encoder, category,
-                should_print
-            )
+                input_event, model, sampler, data_loader, text_encoder, category)
             outputs.update(new_outputs)
         return outputs
     else:
@@ -137,8 +126,7 @@ def get_atomic_sequence(
 
         sequence_all['beams'] = sampling_result["beams"]
 
-        if should_print:
-            print_atomic_sequence(sequence_all)
+        print_atomic_sequence(sequence_all)
 
         return {category: sequence_all}
 
@@ -322,7 +310,7 @@ def evaluate_conceptnet_sequence(e1, model, data_loader,
                 attention_mask[:, :-1], loss_reduction="none")
 
             final_loss = (loss * loss_mask)
-
+            
         sequence_all['total_loss'] = final_loss.sum().item()
         sequence_all['normalized_loss'] = (final_loss.sum() / loss_mask.sum()).item()
         sequence_all['step_losses'] = final_loss[0, data_loader.max_e1 + data_loader.max_r - 1:].tolist()

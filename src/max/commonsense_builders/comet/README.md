@@ -20,7 +20,7 @@ bash scripts/setup/get_model_files.sh
 Then install dependencies (assuming you already have Python 3.6 and Pytorch >= 1.0:
 
 ```
-pip install tensorflow
+conda install tensorflow
 pip install ftfy==5.1
 conda install -c conda-forge spacy
 python -m spacy download en
@@ -97,7 +97,7 @@ If you want to generate with a larger beam size, run the generation script
 python scripts/generate/generate_conceptnet_beam_search.py --beam 10 --split $DATASET_SPLIT --model_name /path/to/model/file
 ```
 
-<h3> Classifying Generated Tupes </h3>
+<h3> Classifying Generated Tuples </h3>
 
 To run the classifier from Li et al., 2016 on your generated tuples to evaluate correctness, first download the pretrained model from:
 

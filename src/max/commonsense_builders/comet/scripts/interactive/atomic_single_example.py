@@ -1,6 +1,5 @@
 import os
 import sys
-import pathlib
 import argparse
 import torch
 
@@ -9,7 +8,6 @@ sys.path.append(os.getcwd())
 import src.data.data as data
 import src.data.config as cfg
 import src.interactive.functions as interactive
-
 
 
 if __name__ == "__main__":

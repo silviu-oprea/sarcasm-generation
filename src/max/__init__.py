@@ -1,4 +1,9 @@
-from .types import ExplainableSarcasticResponse
+from .types import ExplainableSarcasticResponse, CommonsenseBuilderResponse
+from .expectation_extractors import PatternNegationExpectationExtractor
+from .commonsense_builders import CometCommonsenseBuilder
+from .response_generators import PatternResponseGenerator
+from .sarcasm_generator import SarcasmGenerator
+
 # from commonsense_builders.comet_builder import build_commonsense
 # from strategy_selectors.random_selector import select_strategy
 # from generators.pattern_generator import generate_response
