@@ -1,4 +1,4 @@
-# Max: An Explainable Sarcastic Response Generator
+# 🙂 Max: An Explainable Sarcastic Response Generator 🙂
 
 This repository contains the implementation of the Max sarcasm generator, mentioned in the following published papers:
 * Silviu Vlad Oprea, Steven Wilson, and Walid Magdy. 2021. Chandler: An Explainable Sarcastic Response Generator. In Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing: System Demonstrations, pages 339–349. Association for Computational Linguistics. [link](https://aclanthology.org/2021.emnlp-demo.38/).
