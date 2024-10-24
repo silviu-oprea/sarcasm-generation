@@ -1,9 +1,0 @@
-{
-    "python.pythonPath": "/Users/silviu/miniconda3/envs/nlp/bin/python",
-    "python.linting.enabled": true,
-    "python.linting.pylintEnabled": true,
-    "python.linting.pylintArgs": [
-        "--init-hook",
-        "import sys; sys.path.insert(0, '.')"
-    ]
-}
