@@ -1,0 +1,8 @@
+torch==2.2.2
+ftfy==5.1
+spacy==3.8.2
+pandas==2.2.3
+lemminflect==0.2.3
+transformers==4.45.2
+scipy==1.14.1
+ipython==8.28.0

@@ -7,8 +7,8 @@
     "relation_object": "train for the marathon",
     "norm_violated": "maxim of quality",
     "response_texts": [
-      "Brilliant! Good job not training for the marathon.",
-      "You didn't train for the marathon, that's for sure. Well done!"
+      "Brilliant! Well done not training for the marathon.",
+      "You didn't train for the marathon, that's for sure. Good job!"
     ]
   },
   {
@@ -20,7 +20,7 @@
     "norm_violated": "maxim of quality",
     "response_texts": [
       "Brilliant! You're not  very athletic, that's for sure.",
-      "Yay! Good job not being athletic.",
+      "Brilliant! Good job not being athletic.",
       "Yay! You're not a very athletic person, that's for sure."
     ]
   },
@@ -43,7 +43,7 @@
     "relation_object": "become famous",
     "norm_violated": "maxim of quality",
     "response_texts": [
-      "You're not really going to become famous right now, that's for sure. Brilliant!"
+      "You're not really going to become famous right now, that's for sure. Yay!"
     ]
   },
   {
@@ -55,8 +55,8 @@
     "norm_violated": "maxim of quality",
     "response_texts": [
       "Brilliant! You're  very defeated, that's for sure.",
-      "Brilliant! Good job being defeated.",
-      "Brilliant! You're a very defeated person, that's for sure."
+      "Brilliant! Well done being defeated.",
+      "Yay! You're a very defeated person, that's for sure."
     ]
   },
   {
@@ -90,7 +90,7 @@
     "relation_object": "know how to write",
     "norm_violated": "maxim of quality",
     "response_texts": [
-      "Brilliant! Good job not knowing how to write.",
+      "Brilliant! Well done not knowing how to write.",
       "You didn't know how to write, that's for sure. Well done!"
     ]
   },
@@ -103,7 +103,7 @@
     "norm_violated": "maxim of quality",
     "response_texts": [
       "Yay! You're not  very unintelligent, that's for sure.",
-      "Brilliant! Good job not being unintelligent.",
+      "Brilliant! Well done not being unintelligent.",
       "Brilliant! You're not a very unintelligent person, that's for sure."
     ]
   },
@@ -115,7 +115,7 @@
     "relation_object": "embarrassed",
     "norm_violated": "maxim of quality",
     "response_texts": [
-      "You're not feeling very embarrassed right now, that's for sure. Yay!"
+      "You're not feeling very embarrassed right now, that's for sure. Brilliant!"
     ]
   },
   {
@@ -126,7 +126,7 @@
     "relation_object": "sigh in frustration",
     "norm_violated": "maxim of quality",
     "response_texts": [
-      "You're not really going to sigh in frustration right now, that's for sure. Yay!"
+      "You're not really going to sigh in frustration right now, that's for sure. Brilliant!"
     ]
   },
   {
@@ -139,7 +139,7 @@
     "response_texts": [
       "Brilliant! You're  very incompetent, that's for sure.",
       "Yay! Well done being incompetent.",
-      "Yay! You're a very incompetent person, that's for sure."
+      "Brilliant! You're a very incompetent person, that's for sure."
     ]
   },
   {
@@ -150,7 +150,7 @@
     "relation_object": "like a failure",
     "norm_violated": "maxim of quality",
     "response_texts": [
-      "You're feeling very like a failure right now, that's for sure. Brilliant!"
+      "You're feeling very like a failure right now, that's for sure. Yay!"
     ]
   },
   {
