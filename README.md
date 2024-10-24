@@ -97,7 +97,7 @@ Please consult the papers and/or for the meaning of each field.
 I hope you found this fun and instructive.
 If you are using this codebase, please consider citing our papers:
 
-```latex
+```bibtex
 @inproceedings{oprea-etal-2021-chandler,
     title = "Chandler: An Explainable Sarcastic Response Generator",
     author = "Oprea, Silviu  and
@@ -118,7 +118,7 @@ If you are using this codebase, please consider citing our papers:
 
 and
 
-```latex
+```bibtex
 @inproceedings{oprea-etal-2022-chatbot,
     title = "Should a Chatbot be Sarcastic? Understanding User Preferences Towards Sarcasm Generation",
     author = "Oprea, Silviu Vlad  and
